@@ -10,11 +10,6 @@ INSTALL_DIR = ..
 SRC_DIRS = src src/sexpLibrary src/utils src/worldModel src/objects src/geometry src/skills src/etc  
 DIRS = . ${SRC_DIRS} 
 
-
-#ifeq ($(TYPE),test)
-#DIRS = test ${TEST_DIRS}
-#TARGET = mrltest
-#endif
 SETTINGS_FILES := .sshagent/*.rb
 DIRS4BACKUP = . $(SRC_DIRS) ${TEST_DIRS} $(CONF_DIR)
 # Which libraries are linked
@@ -74,10 +69,6 @@ DFILES := $(addprefix $(STORE)/,$(SOURCE:.cpp=.d))
 
 # Which files to add to backups, apart from the source code
 EXTRA_FILES = makefile $(SVN_INFO) 
-
-#these are for backup
-#SRC_AND_TEST_SOURCE  := $(foreach DIR,$(SRC_AND_TST_DIRS),$(wildcard $(DIR)/*.cpp))$
-#SRC_AND_TEST_HEADERS := $(foreach DIR,$(SRC_AND_TST_DIRS),$(wildcard $(DIR)/*.h))$
 
 # Specify phony rules. These are rules that are not real files.
 .PHONY: clean backup dirs
