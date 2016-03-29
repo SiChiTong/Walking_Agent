@@ -12,14 +12,14 @@ class Point{
     double     z_Teta;
 			    	   Point (){}
 		    	     Point ( double x , double y , double z=0 );
-			   
+
 		void       setX             ( double  );
 		void       setY             ( double  );
 		void       setZ             ( double  );
 		void       setRo            ( double  );
 		void       setPhi	    ( double  );
 		void   	   setTeta	    ( double  );
-		
+
 		double     getX             (         );
 		double     getY             (         );
 		double     getZ        	    (         );
@@ -27,12 +27,12 @@ class Point{
 		double     getPhi	    (	      );
 		double     getTeta	    (	      );
 		float      getDirection (       );
-		
+
 		double     getDistanceTo    ( Point   );
 		double     getDistanceTo2   ( Point   );
 		double     getMagnitude     (         );
 		Point      rotate( float angle );
-		
+
 
 		Point      operator +=      ( Point   );
 		Point      operator -=      ( Point   );
@@ -47,7 +47,7 @@ class Point{
 		Point      getNorm	    ();
 		void       printOnScreen();
 		friend ostream &operator <<(ostream&,const Point &);
-	
+
 };
 
 ///=====================================

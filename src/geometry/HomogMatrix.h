@@ -13,11 +13,9 @@ public:
 	HomogMatrix(const RotationMatrix& rot, const Point& trans);
 	HomogMatrix(const Point& trans);
 	HomogMatrix(const RotationMatrix& rot);
-
 	
 	HomogMatrix operator*(const HomogMatrix& other) const;
 	friend std::ostream& operator<<(std::ostream& os, const HomogMatrix& h);
-	
 	
 	void setTranslation(const Point& trans);
 	void setRotation(const RotationMatrix& rot);
