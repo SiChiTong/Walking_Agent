@@ -36,7 +36,7 @@ Bezier::Bezier(const Point _p0, const Point _p1, const Point _p2,
   this->duration = _duration;
   type = "Quadratic";
 }
-;
+
 
 ///=====================================
 Bezier::Bezier(const Point _p0, const Point _p1, const Point _p2,
@@ -48,7 +48,7 @@ Bezier::Bezier(const Point _p0, const Point _p1, const Point _p2,
   this->duration = _duration;
   type = "Cubic";
 }
-;
+
 
 ///=====================================
 void Bezier::setDuration(float _duration) {

@@ -71,7 +71,6 @@ public:
   /// \param[out] 1 for positive, -1 for negative, 0 for the 0.
   static int signX(double _x);
 
-
 private:
 
   /// \define The Pi number, 3.141592653589793

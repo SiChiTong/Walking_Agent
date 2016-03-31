@@ -21,34 +21,60 @@
 #include <iomanip>
 #include "Point.h"
 
-class RotationMatrix
-{
-
+/// \define This class presents the functionalities to use rotation matrix
+/// The rotation matrix is mainly used to create homogeneous matrix
+class RotationMatrix {
 
 public:
-    Point l0, l1, l2; //LINES
-    RotationMatrix();
-    RotationMatrix(const Point& lin0, const Point& lin1, const Point& lin2);
 
-    RotationMatrix operator*(const RotationMatrix& other) const;
-    Point operator*(const Point& vector) const;
-    
-    RotationMatrix& rotateX(const float angle);
-    RotationMatrix& rotateY(const float angle);
-    RotationMatrix& rotateZ(const float angle);
-    RotationMatrix getInverse() const;
-    
-    
-    friend std::ostream& operator<<(std::ostream& os, const RotationMatrix& r);   
-    
-    
+  /// \define The vectors represents each line of the rotation matrix
+  Point l0, l1, l2;
+
+  /// \define The constructor of the rotation matrix
+  RotationMatrix();
+
+  /// \define The constructor of the rotation matrix based on the given
+  /// the three lines of the Matrix
+  RotationMatrix(const Point& lin0, const Point& lin1, const Point& lin2);
+
+  /// \define The multiplication operator for multiplying two matrixes
+  RotationMatrix operator*(const RotationMatrix& other) const;
+
+  /// \define The multiplication operator for multiplying two vectors
+  Point operator*(const Point& vector) const;
+
+  /// \define Calculate the rotation matrix representing the rotation
+  /// around X axis
+  /// \param[in] _angle degrees
+  RotationMatrix& rotateX(const float angle);
+
+  /// \define Calculate the rotation matrix representing the rotation
+  /// around Y axis
+  /// \param[in] _angle degrees
+  RotationMatrix& rotateY(const float angle);
+
+  /// \define Calculate the rotation matrix representing the rotation
+  /// around Z axis
+  /// \param[in] _angle degrees
+  RotationMatrix& rotateZ(const float angle);
+
+  /// \define Calculate the inverse of the rotation matrix
+  RotationMatrix getInverse() const;
+
+  /// \define print the rotation matrix on the screen
+  friend std::ostream& operator<<(std::ostream& os, const RotationMatrix& r);
+
 private:
-    RotationMatrix GetRotationMatrixX(const float& angle);
-    RotationMatrix GetRotationMatrixY(const float& angle);
-    RotationMatrix GetRotationMatrixZ(const float& angle);
-    
-    
+
+  /// \define Calculate the rotation matrix for the rotation around X axis
+  RotationMatrix GetRotationMatrixX(const float& angle);
+
+  /// \define Calculate the rotation matrix for the rotation around Y axis
+  RotationMatrix GetRotationMatrixY(const float& angle);
+
+  /// \define Calculate the rotation matrix for the rotation around Z axis
+  RotationMatrix GetRotationMatrixZ(const float& angle);
+
 };
 
-
-#endif // ROTATIONMATRIX_H
+#endif

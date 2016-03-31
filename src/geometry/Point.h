@@ -23,111 +23,112 @@
 
 /// \define this is the point class. This class is developed the needed data structure and
 /// operators to work with 2D and 3D point both in polar and Cartesian coordinate.
-class Point{
+class Point {
 
 public:
 
   /// \define The global variables used in data structures
-  double     x_Ro;
-  double     y_Phi;
-  double     z_Yaw;
+  double x_Ro;
+  double y_Phi;
+  double z_Yaw;
 
   /// \define The Constructor of the class
-  Point (){}
+  Point() {
+  }
 
   /// \define The Constructor of the class
   /// \param[in] x, y and z positions, for 2D points z is zero by default
-  Point ( double _x , double _y , double _z=0 );
+  Point(double _x, double _y, double _z = 0);
 
   /// \define The Setter for the X parameter
-  void       setX             ( double  );
+  void setX(double);
 
   /// \define The Setter for the Y parameter
-  void       setY             ( double  );
+  void setY(double);
 
   /// \define The Setter for the Z parameter
-  void       setZ             ( double  );
+  void setZ(double);
 
   /// \define The Setter for the Roll parameter
-  void       setRo            ( double  );
+  void setRo(double);
 
   /// \define The Setter for the Pitch parameter
-  void       setPhi	    ( double  );
+  void setPhi(double);
 
   /// \define The Setter for the Yaw parameter
-  void   	   setYaw	    ( double  );
+  void setYaw(double);
 
   /// \define The getter for the X parameter
-  double     getX       (         );
+  double getX();
 
   /// \define The getter for the Y parameter
-  double     getY       (         );
+  double getY();
 
   /// \define The getter for the Z parameter
-  double     getZ       (         );
+  double getZ();
 
   /// \define The getter for the Roll parameter
-  double     getRo	    (  	      );
+  double getRo();
 
   /// \define The getter for the Pitch parameter
-  double     getPhi	    (	        );
+  double getPhi();
 
   /// \define The getter for the Yaw parameter
-  double     getYaw	    (	        );
+  double getYaw();
 
   /// \define A function for calculating Yaw angle of a Cartesian point
-  float      getDirection (       );
+  float getDirection();
 
   /// \define A function for calculating Euqlidican distance between two Cartesian points
-  double     getDistanceTo    ( Point   );
+  double getDistanceTo(Point);
 
   /// \define A function for calculating the magnitude of a point by the Euqlidican distance
   /// of a Cartesian point to origin
-  double     getMagnitude     (         );
+  double getMagnitude();
 
   /// \define A function to rotate a point using the input Yaw angle
-  Point      rotate           ( float   );
+  Point rotate(float);
 
   /// \define the summation operator of a point with another point
-  Point      operator +       ( Point   );
+  Point operator +(Point);
 
   /// \define the subtraction of a point with another point
-  Point      operator -       ( Point   );
+  Point operator -(Point);
 
   /// \define The devision operator of a point with another point
-  Point      operator /       ( double  );
+  Point operator /(double);
 
   /// \define The multiply operator of a point with another point
-  Point      operator *       ( double  );
+  Point operator *(double);
 
   /// \define The (+=) operator of a point with another point
-  Point      operator +=      ( Point   );
+  Point operator +=(Point);
 
   /// \define The (-=) operator of a point with another point
-  Point      operator -=      ( Point   );
+  Point operator -=(Point);
 
   /// \define The (/=) operator of a point with another point
-  Point      operator /=      ( double  );
+  Point operator /=(double);
 
   /// \define The (*=) operator of a point with another point
-  Point      operator *=      ( double  );
+  Point operator *=(double);
 
   /// \define The boolean operator for the equality between two point
   /// this operator handle the floating issue.
-  bool       operator ==      ( Point   );
+  bool operator ==(Point);
 
   /// \define The boolean operator for inequality between two point
   /// this operator handle the floating issue.
-  bool       operator !=      ( Point   );
+  bool operator !=(Point);
 
   /// \define The function for normalizing the point
-  Point      getNorm	    ();
+  Point getNorm();
 
   /// \define Print in the information contains in the point on the screen
-  void       printOnScreen();
+  void printOnScreen();
 
   /// \define Operator to print the point
-  friend ostream &operator <<(ostream&,const Point &);
+  friend ostream &operator <<(ostream&, const Point &);
 
 };
 

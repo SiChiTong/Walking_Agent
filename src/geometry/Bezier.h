@@ -33,8 +33,7 @@ public:
 
   /// \define The constructor of the Class
   Bezier() {
-  }
-  ;
+  };
 
   /// \define The constructor of the Class for creating linear Bézier curve.
   /// Simply the straight line between the given points P0 and P1.
