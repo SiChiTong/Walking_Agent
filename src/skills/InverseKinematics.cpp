@@ -47,16 +47,16 @@ bool InverseKinematics::calcLegJoints(const HomogMatrix& position, vector<float>
     float angKnee = PI - acos(cosKnee);
     
     float angFootPitch = -acos(cosLowerLeg);
-    angFootPitch -= atan2(target.getTranslation().x_Ro, Point(0,target.getTranslation().y_Phi, target.getTranslation().z_Teta).getMagnitude ());
+    angFootPitch -= atan2(target.getTranslation().x_Ro, Point(0,target.getTranslation().y_Phi, target.getTranslation().z_Yaw).getMagnitude ());
     
-    float angFootRoll = atan2(target.getTranslation().y_Phi, target.getTranslation().z_Teta) * sign;
+    float angFootRoll = atan2(target.getTranslation().y_Phi, target.getTranslation().z_Yaw) * sign;
     RotationMatrix hipFromFoot;
     hipFromFoot.rotateX(angFootRoll * -sign);
     hipFromFoot.rotateY(-angFootPitch - angKnee);
     RotationMatrix hip = hipFromFoot.getInverse() * target.getRotation();
-    float angHipRoll = asin(-hip.l1.z_Teta) * -sign;
+    float angHipRoll = asin(-hip.l1.z_Yaw) * -sign;
     angHipRoll -= PI/4;
-    float angHipPitch = -atan2(hip.l0.z_Teta, hip.l2.z_Teta);
+    float angHipPitch = -atan2(hip.l0.z_Yaw, hip.l2.z_Yaw);
     float angHipYaw = atan2(hip.l1.x_Ro, hip.l1.y_Phi) * -sign;
 
 
