@@ -206,7 +206,7 @@ void RunningZMP::execute() {
     Point p2 = Point(planedRightFoot[0].Position.x_Ro,
         planedRightFoot[0].Position.y_Phi, 0);
     Point p1 = Geometry::determineMidpoint(p0, p2);
-    p1.z_Teta = swingHeight;
+    p1.z_Yaw = swingHeight;
 
     if (thetaStep < 0) {
       bzqdRotateSupport.setLinear(Point(-thetaStep, 0, 0), Point(0, 0, 0),
@@ -229,23 +229,23 @@ void RunningZMP::execute() {
 
     // rotation around X axis of CoM can be used in Active Balance
     targLeftFPos.x_Ro = targLeftFPos.x_Ro * Geometry::Cos(degRotationTunk)
-        + targLeftFPos.z_Teta * Geometry::Sin(degRotationTunk);
-    targLeftFPos.z_Teta = -targLeftFPos.x_Ro * Geometry::Sin(degRotationTunk)
-        + targLeftFPos.z_Teta * Geometry::Cos(degRotationTunk);
+        + targLeftFPos.z_Yaw * Geometry::Sin(degRotationTunk);
+    targLeftFPos.z_Yaw = -targLeftFPos.x_Ro * Geometry::Sin(degRotationTunk)
+        + targLeftFPos.z_Yaw * Geometry::Cos(degRotationTunk);
     targRightFPos.x_Ro = targRightFPos.x_Ro * Geometry::Cos(degRotationTunk)
-        + targRightFPos.z_Teta * Geometry::Sin(degRotationTunk);
-    targRightFPos.z_Teta = -targRightFPos.x_Ro * Geometry::Sin(degRotationTunk)
-        + targRightFPos.z_Teta * Geometry::Cos(degRotationTunk);
+        + targRightFPos.z_Yaw * Geometry::Sin(degRotationTunk);
+    targRightFPos.z_Yaw = -targRightFPos.x_Ro * Geometry::Sin(degRotationTunk)
+        + targRightFPos.z_Yaw * Geometry::Cos(degRotationTunk);
 
     // rotation around Y axis of CoM can be used in Active Balance
     targLeftFPos.y_Phi = targLeftFPos.y_Phi * Geometry::Cos(degRotationTunkY)
-        - targLeftFPos.z_Teta * Geometry::Sin(degRotationTunkY);
-    targLeftFPos.z_Teta = targLeftFPos.y_Phi * Geometry::Sin(degRotationTunkY)
-        + targLeftFPos.z_Teta * Geometry::Cos(degRotationTunkY);
+        - targLeftFPos.z_Yaw * Geometry::Sin(degRotationTunkY);
+    targLeftFPos.z_Yaw = targLeftFPos.y_Phi * Geometry::Sin(degRotationTunkY)
+        + targLeftFPos.z_Yaw * Geometry::Cos(degRotationTunkY);
     targRightFPos.y_Phi = targRightFPos.y_Phi * Geometry::Cos(degRotationTunkY)
-        - targRightFPos.z_Teta * Geometry::Sin(degRotationTunkY);
-    targRightFPos.z_Teta = targRightFPos.y_Phi * Geometry::Sin(degRotationTunkY)
-        + targRightFPos.z_Teta * Geometry::Cos(degRotationTunkY);
+        - targRightFPos.z_Yaw * Geometry::Sin(degRotationTunkY);
+    targRightFPos.z_Yaw = targRightFPos.y_Phi * Geometry::Sin(degRotationTunkY)
+        + targRightFPos.z_Yaw * Geometry::Cos(degRotationTunkY);
 
     computePose(targLeftFPos, targRightFPos,
         Point(degRotationTunk, degRotationTunkY, rotateSwing.x_Ro),
@@ -261,7 +261,7 @@ void RunningZMP::execute() {
     Point p2 = Point(planedLeftFoot[0].Position.x_Ro,
         planedLeftFoot[0].Position.y_Phi, 0);
     Point p1 = Geometry::determineMidpoint(p0, p2);
-    p1.z_Teta = swingHeight;
+    p1.z_Yaw = swingHeight;
 
     bzqdSwing.setQuadratic(p0, p1, p2, dsp_max - dsp_min);
     if (thetaStep < 0) {
@@ -283,25 +283,25 @@ void RunningZMP::execute() {
 
     /////////rotation
     targLeftFPos.x_Ro = targLeftFPos.x_Ro * Geometry::Cos(degRotationTunk)
-        + targLeftFPos.z_Teta * Geometry::Sin(degRotationTunk);
-    targLeftFPos.z_Teta = -targLeftFPos.x_Ro * Geometry::Sin(degRotationTunk)
-        + targLeftFPos.z_Teta * Geometry::Cos(degRotationTunk);
+        + targLeftFPos.z_Yaw * Geometry::Sin(degRotationTunk);
+    targLeftFPos.z_Yaw = -targLeftFPos.x_Ro * Geometry::Sin(degRotationTunk)
+        + targLeftFPos.z_Yaw * Geometry::Cos(degRotationTunk);
 
     targRightFPos.x_Ro = targRightFPos.x_Ro * Geometry::Cos(degRotationTunk)
-        + targRightFPos.z_Teta * Geometry::Sin(degRotationTunk);
-    targRightFPos.z_Teta = -targRightFPos.x_Ro * Geometry::Sin(degRotationTunk)
-        + targRightFPos.z_Teta * Geometry::Cos(degRotationTunk);
+        + targRightFPos.z_Yaw * Geometry::Sin(degRotationTunk);
+    targRightFPos.z_Yaw = -targRightFPos.x_Ro * Geometry::Sin(degRotationTunk)
+        + targRightFPos.z_Yaw * Geometry::Cos(degRotationTunk);
     /////////rotation
     /////////rotationY
     targLeftFPos.y_Phi = targLeftFPos.y_Phi * Geometry::Cos(degRotationTunkY)
-        - targLeftFPos.z_Teta * Geometry::Sin(degRotationTunkY);
-    targLeftFPos.z_Teta = targLeftFPos.y_Phi * Geometry::Sin(degRotationTunkY)
-        + targLeftFPos.z_Teta * Geometry::Cos(degRotationTunkY);
+        - targLeftFPos.z_Yaw * Geometry::Sin(degRotationTunkY);
+    targLeftFPos.z_Yaw = targLeftFPos.y_Phi * Geometry::Sin(degRotationTunkY)
+        + targLeftFPos.z_Yaw * Geometry::Cos(degRotationTunkY);
 
     targRightFPos.y_Phi = targRightFPos.y_Phi * Geometry::Cos(degRotationTunkY)
-        - targRightFPos.z_Teta * Geometry::Sin(degRotationTunkY);
-    targRightFPos.z_Teta = targRightFPos.y_Phi * Geometry::Sin(degRotationTunkY)
-        + targRightFPos.z_Teta * Geometry::Cos(degRotationTunkY);
+        - targRightFPos.z_Yaw * Geometry::Sin(degRotationTunkY);
+    targRightFPos.z_Yaw = targRightFPos.y_Phi * Geometry::Sin(degRotationTunkY)
+        + targRightFPos.z_Yaw * Geometry::Cos(degRotationTunkY);
     /////////rotation
 
     computePose(targLeftFPos, targRightFPos,
@@ -636,9 +636,9 @@ vector<float> RunningZMP::legInvKin(const int foot, const Point targetPos,
 
   Point targetTrans = targetPos;
   targetRotZ = RotationMatrix(
-      Point(Geometry::Cos(targetOri.z_Teta), -Geometry::Sin(targetOri.z_Teta),
+      Point(Geometry::Cos(targetOri.z_Yaw), -Geometry::Sin(targetOri.z_Yaw),
           0),
-      Point(Geometry::Sin(targetOri.z_Teta), Geometry::Cos(targetOri.z_Teta),
+      Point(Geometry::Sin(targetOri.z_Yaw), Geometry::Cos(targetOri.z_Yaw),
           0), Point(0, 0, 1));
 
   targetRotX = RotationMatrix(Point(1, 0, 0),

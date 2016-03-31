@@ -71,7 +71,7 @@ void WorldModel::printJoints(){
 
   // log the Ball
   logWorlModel	<< "\n\n\tBall :" << ball.getPolarPos().getRo()<< " "
-      << ball.getPolarPos().getTeta() << " " << ball.getPolarPos().getPhi() << endl;
+      << ball.getPolarPos().getYaw() << " " << ball.getPolarPos().getPhi() << endl;
   logWorlModel	<< "Direction of head from flag :" << getDOF(DOF_HEAD_PAN) << endl;
 
   logWorlModel << "\nJoints degree :\n\t" ;

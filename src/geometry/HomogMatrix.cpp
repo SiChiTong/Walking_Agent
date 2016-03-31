@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2016 nima@ua.pt
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 #include "HomogMatrix.h"
 #include <iomanip>
 
@@ -16,17 +33,17 @@ HomogMatrix::HomogMatrix(const RotationMatrix& rot, const Point& trans)
 {
   elem[0][0] = rot.l0.x_Ro;
   elem[0][1] = rot.l0.y_Phi;
-  elem[0][2] = rot.l0.z_Teta;
+  elem[0][2] = rot.l0.z_Yaw;
   elem[1][0] = rot.l1.x_Ro;
   elem[1][1] = rot.l1.y_Phi;
-  elem[1][2] = rot.l1.z_Teta;
+  elem[1][2] = rot.l1.z_Yaw;
   elem[2][0] = rot.l2.x_Ro;
   elem[2][1] = rot.l2.y_Phi;
-  elem[2][2] = rot.l2.z_Teta;
+  elem[2][2] = rot.l2.z_Yaw;
   
   elem[0][3] = trans.x_Ro;
   elem[1][3] = trans.y_Phi;
-  elem[2][3] = trans.z_Teta;
+  elem[2][3] = trans.z_Yaw;
   
   elem[3][0] = elem[3][1] = elem[3][2] = 0;
   elem[3][3] = 1;
@@ -46,7 +63,7 @@ HomogMatrix::HomogMatrix(const Point& trans)
   
   elem[0][3] = trans.x_Ro;
   elem[1][3] = trans.y_Phi;
-  elem[2][3] = trans.z_Teta;
+  elem[2][3] = trans.z_Yaw;
   
   elem[3][0] = elem[3][1] = elem[3][2] = 0;
   elem[3][3] = 1;
@@ -56,13 +73,13 @@ HomogMatrix::HomogMatrix(const RotationMatrix& rot)
 {
   elem[0][0] = rot.l0.x_Ro;
   elem[0][1] = rot.l0.y_Phi;
-  elem[0][2] = rot.l0.z_Teta;
+  elem[0][2] = rot.l0.z_Yaw;
   elem[1][0] = rot.l1.x_Ro;
   elem[1][1] = rot.l1.y_Phi;
-  elem[1][2] = rot.l1.z_Teta;
+  elem[1][2] = rot.l1.z_Yaw;
   elem[2][0] = rot.l2.x_Ro;
   elem[2][1] = rot.l2.y_Phi;
-  elem[2][2] = rot.l2.z_Teta;
+  elem[2][2] = rot.l2.z_Yaw;
   
   elem[0][3] = 0;
   elem[1][3] = 0;
@@ -79,13 +96,13 @@ RotationMatrix HomogMatrix::getRotation()
     RotationMatrix result;
     result.l0.x_Ro = elem[0][0];
     result.l0.y_Phi = elem[0][1];
-    result.l0.z_Teta = elem[0][2];
+    result.l0.z_Yaw = elem[0][2];
     result.l1.x_Ro = elem[1][0];
     result.l1.y_Phi = elem[1][1];
-    result.l1.z_Teta = elem[1][2];
+    result.l1.z_Yaw = elem[1][2];
     result.l2.x_Ro = elem[2][0];
     result.l2.y_Phi = elem[2][1];
-    result.l2.z_Teta = elem[2][2];
+    result.l2.z_Yaw = elem[2][2];
     return result;
 }
 
@@ -138,7 +155,7 @@ void HomogMatrix::setTranslation(const Point& trans)
 {
     elem[0][3] = trans.x_Ro;
     elem[1][3] = trans.y_Phi;
-    elem[2][3] = trans.z_Teta;
+    elem[2][3] = trans.z_Yaw;
 }
 
 void HomogMatrix::translate(const float& x, const float& y, const float& z)
@@ -152,7 +169,7 @@ void HomogMatrix::translate(const Point& trans)
 {
     elem[0][3] += trans.x_Ro;
     elem[1][3] += trans.y_Phi;
-    elem[2][3] += trans.z_Teta;
+    elem[2][3] += trans.z_Yaw;
 }
 
 
@@ -161,13 +178,13 @@ void HomogMatrix::setRotation(const RotationMatrix& rot)
 {
   elem[0][0] = rot.l0.x_Ro;
   elem[0][1] = rot.l0.y_Phi;
-  elem[0][2] = rot.l0.z_Teta;
+  elem[0][2] = rot.l0.z_Yaw;
   elem[1][0] = rot.l1.x_Ro;
   elem[1][1] = rot.l1.y_Phi;
-  elem[1][2] = rot.l1.z_Teta;
+  elem[1][2] = rot.l1.z_Yaw;
   elem[2][0] = rot.l2.x_Ro;
   elem[2][1] = rot.l2.y_Phi;
-  elem[2][2] = rot.l2.z_Teta;
+  elem[2][2] = rot.l2.z_Yaw;
 }
 
 
@@ -181,7 +198,7 @@ HomogMatrix HomogMatrix::getInverse()
     Point trans = Point(getTranslation());
     
     result.setRotation(rot.getInverse());
-    result.setTranslation(result.getRotation() * Point(-trans.x_Ro,-trans.y_Phi,-trans.z_Teta));
+    result.setTranslation(result.getRotation() * Point(-trans.x_Ro,-trans.y_Phi,-trans.z_Yaw));
     return result;
 }
 
