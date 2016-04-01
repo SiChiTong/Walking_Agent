@@ -17,8 +17,7 @@
 
 #include "RunningZMP.h"
 
-RunningZMP::RunningZMP()
-{
+RunningZMP::RunningZMP() {
   CC = CommandCreator::getUniqueInstance();
   WM = WorldModel::getUniqueInstance();
   planedCoM = new CoM[2000];
@@ -75,7 +74,6 @@ CoM* RunningZMP::fastDynamicSolverWithSlideWindow(Point comInit,
   c[0] = c[0] / b[0];
   d[0] = d[0] / b[0];
   dy[0] = dy[0] / b[0];
-
 
   for (int i = 1; i < length - 1; i++) {
     double temp = b[i] - a[i] * c[i - 1];
@@ -659,10 +657,9 @@ vector<float> RunningZMP::legInvKin(const int foot, const Point targetPos,
 
   Point targetTrans = targetPos;
   targetRotZ = RotationMatrix(
-      Point(Geometry::Cos(targetOri.z_Yaw), -Geometry::Sin(targetOri.z_Yaw),
-          0),
-      Point(Geometry::Sin(targetOri.z_Yaw), Geometry::Cos(targetOri.z_Yaw),
-          0), Point(0, 0, 1));
+      Point(Geometry::Cos(targetOri.z_Yaw), -Geometry::Sin(targetOri.z_Yaw), 0),
+      Point(Geometry::Sin(targetOri.z_Yaw), Geometry::Cos(targetOri.z_Yaw), 0),
+      Point(0, 0, 1));
 
   targetRotX = RotationMatrix(Point(1, 0, 0),
       Point(0, Geometry::Cos(targetOri.y_Phi), -Geometry::Sin(targetOri.y_Phi)),
