@@ -1,18 +1,36 @@
+/*
+ * Copyright (C) 2016 nima@ua.pt
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 #include "RunningZMP.h"
 
 RunningZMP::RunningZMP()
 {
   CC = CommandCreator::getUniqueInstance();
   WM = WorldModel::getUniqueInstance();
-  planedCoM = new CoM2[2000];
+  planedCoM = new CoM[2000];
   init();
 }
+
 //===============================================
-CoM2* RunningZMP::fastDynamicSolverWithSlideWindow(Point comInit,
-    ZMP2* zmpTrajector, int length, double dt,
+CoM* RunningZMP::fastDynamicSolverWithSlideWindow(Point comInit,
+    ZMP* zmpTrajector, int length, double dt,
     std::vector<HeightTrajectory> comZ) {
 
-  CoM2 *com = new CoM2[length + 1000];
+  CoM *com = new CoM[length + 1000];
   double a[length + 1000];
   double b[length + 1000];
   double c[length + 1000];
@@ -89,6 +107,7 @@ CoM2* RunningZMP::fastDynamicSolverWithSlideWindow(Point comInit,
   return com;
 
 }
+
 //=============================================================
 void RunningZMP::createHeightTrajectory(double size) {
 
@@ -148,17 +167,17 @@ void RunningZMP::execute() {
 
     double previewTime = 2.5;
     int previewStep = int(previewTime / stepTime);
-    footGenerator2(stepSizeX, stepSizeY, 0, previewStep, stepTime,
+    footGenerator(stepSizeX, stepSizeY, 0, previewStep, stepTime,
         inicialLeftLeg, inicialRightLeg);
 
     int sizeZMP;
-    ZMP2* zmp = zmpGenerator2(previewStep, deltaT, 0, sizeZMP);
+    ZMP* zmp = zmpGenerator(previewStep, deltaT, 0, sizeZMP);
     lastTheta = thetaStep;
     oneStepSize = int(stepTime / deltaT);
 
     createHeightTrajectory(max(sizeZMP, oneStepSize));
 
-    CoM2* com = fastDynamicSolverWithSlideWindow(
+    CoM* com = fastDynamicSolverWithSlideWindow(
         Point(initCom.PositionX.x_Ro, initCom.PositionY.x_Ro), zmp, sizeZMP,
         deltaT, comZTrajecotry);
 
@@ -175,16 +194,20 @@ void RunningZMP::execute() {
     delete[] com;
   }
 
-  // Here is the main loop of the walking
+  // After calculating the horizontal CoM from here is the execution of the walk
   Point comPos = getCoM(timeCurrent);
 
   Point leftFootPos, rightFootPos;
 
-  float dsp_min = 0; //PERIOD*DOUBLESUPPORTP/100.0;
-  float dsp_max = stepTime; //PERIOD * (1 - DOUBLESUPPORTP/100.0);
+  // if you want to have double support phase, dsp_min and dsp_max should be changes
+  float dsp_min = 0;
+  float dsp_max = stepTime;
 
   Point targLeftFPos;
   Point targRightFPos;
+
+  // The active balance, here it is the constant not adaptive, in paper the paper it
+  // it is adaptive using the current state of the robot.
   double degRotationTunk = -constantInclination;
   double degRotationTunkY = 0;
 
@@ -281,7 +304,7 @@ void RunningZMP::execute() {
     Point rotateSwing = bzqdRotateSwing.getLinearPosition(timeCurrent);
     Point rotateSupport = bzqdRotateSupport.getLinearPosition(timeCurrent);
 
-    /////////rotation
+    // The active balance rotation in sagittal plane
     targLeftFPos.x_Ro = targLeftFPos.x_Ro * Geometry::Cos(degRotationTunk)
         + targLeftFPos.z_Yaw * Geometry::Sin(degRotationTunk);
     targLeftFPos.z_Yaw = -targLeftFPos.x_Ro * Geometry::Sin(degRotationTunk)
@@ -291,19 +314,18 @@ void RunningZMP::execute() {
         + targRightFPos.z_Yaw * Geometry::Sin(degRotationTunk);
     targRightFPos.z_Yaw = -targRightFPos.x_Ro * Geometry::Sin(degRotationTunk)
         + targRightFPos.z_Yaw * Geometry::Cos(degRotationTunk);
-    /////////rotation
-    /////////rotationY
+
+    // The active balance rotation in coronal plane
     targLeftFPos.y_Phi = targLeftFPos.y_Phi * Geometry::Cos(degRotationTunkY)
         - targLeftFPos.z_Yaw * Geometry::Sin(degRotationTunkY);
     targLeftFPos.z_Yaw = targLeftFPos.y_Phi * Geometry::Sin(degRotationTunkY)
         + targLeftFPos.z_Yaw * Geometry::Cos(degRotationTunkY);
-
     targRightFPos.y_Phi = targRightFPos.y_Phi * Geometry::Cos(degRotationTunkY)
         - targRightFPos.z_Yaw * Geometry::Sin(degRotationTunkY);
     targRightFPos.z_Yaw = targRightFPos.y_Phi * Geometry::Sin(degRotationTunkY)
         + targRightFPos.z_Yaw * Geometry::Cos(degRotationTunkY);
-    /////////rotation
 
+    // Call the inverse kinematics
     computePose(targLeftFPos, targRightFPos,
         Point(degRotationTunk, degRotationTunkY, rotateSupport.x_Ro),
         Point(degRotationTunk, degRotationTunkY, rotateSwing.x_Ro));
@@ -312,16 +334,13 @@ void RunningZMP::execute() {
 
   updatePose();
 
+  // Update the time
   startTime = clock() - startTime;
 
   return;
 
 }
 
-//===========================================
-bool RunningZMP::finished() {
-  return true;
-}
 //===========================================
 void RunningZMP::init() {
   initPos = true;
@@ -365,6 +384,7 @@ void RunningZMP::init() {
   lastTheta = 0;
 
 }
+
 //===========================================
 Point RunningZMP::getCoM(double time) {
   int comIter = floor(time / deltaT);
@@ -377,10 +397,11 @@ Point RunningZMP::getCoM(double time) {
       planedCoM[comIter].PositionY.x_Ro, height);
   return result;
 }
+
 //===========================================
-Foot2 RunningZMP::setFoot(Point Position, bool isSupport, bool isRight,
+Foot RunningZMP::setFoot(Point Position, bool isSupport, bool isRight,
     double time, double theta) {
-  Foot2 foot;
+  Foot foot;
   foot.Position = Position;
   foot.support = isSupport;
   foot.Right = isRight;
@@ -388,6 +409,7 @@ Foot2 RunningZMP::setFoot(Point Position, bool isSupport, bool isRight,
   foot.theta = theta;
   return foot;
 }
+
 //===========================================
 void RunningZMP::setWalkParameter(double period, double dX, double dY,
     double theta, bool presure) {
@@ -423,9 +445,9 @@ void RunningZMP::setWalkParameter(double period, double dX, double dY,
 }
 
 //===========================================
-void RunningZMP::footGenerator2(double stepX, double stepY, double stepTheta,
-    int stepNumber, double timeStep, Foot2 inicialLeftLeg,
-    Foot2 inicialRightLeg) {
+void RunningZMP::footGenerator(double stepX, double stepY, double stepTheta,
+    int stepNumber, double timeStep, Foot inicialLeftLeg,
+    Foot inicialRightLeg) {
 
   if (stop) {
     planedLeftFoot[0] = setFoot(inicialLeftLeg.Position, true,
@@ -458,7 +480,7 @@ void RunningZMP::footGenerator2(double stepX, double stepY, double stepTheta,
   d.rotate(planedLeftFoot[0].theta);
   if (planedLeftFoot[0].support && planedRightFoot[0].support) {
     x = planedLeftFoot[0].Position - hl;
-    planedLeftFoot[0].support = false;    // hack was right
+    planedLeftFoot[0].support = false;
   }
   if (!planedLeftFoot[0].support) {
     x = planedLeftFoot[0].Position - hl;
@@ -503,7 +525,7 @@ void RunningZMP::footGenerator2(double stepX, double stepY, double stepTheta,
           planedRightFoot[i - 1].time + timeStep, newTheta);
     }
 
-    double minLegSperationY = 0.08;    //0.055;
+    double minLegSperationY = 0.08;
     double maxLegSeperationX = 0.20;
     double maxLegSeperationY = 0.20;
     if (planedRightFoot[i].support == false) {
@@ -548,11 +570,11 @@ void RunningZMP::footGenerator2(double stepX, double stepY, double stepTheta,
 }
 
 //==============================================================
-ZMP2* RunningZMP::zmpGenerator2(int stepNumber, double dt,
+ZMP* RunningZMP::zmpGenerator(int stepNumber, double dt,
     double doubleSupportPercent, int &size) {
   double timeStep = planedRightFoot[1].time - planedRightFoot[0].time;
   int initSize = int((stepNumber + 1) * (timeStep) / dt);
-  ZMP2 *zmp = new ZMP2[initSize + 1000];
+  ZMP *zmp = new ZMP[initSize + 1000];
   size = 0;
 
   for (int j = 0; j < stepNumber; j++) {
@@ -626,6 +648,7 @@ void RunningZMP::computePose(const Point lFootPos, const Point rFootPos,
   pose[DOF_ANKLE_RY] = jRightLegDeg[5];
 
 }
+
 //===========================================
 vector<float> RunningZMP::legInvKin(const int foot, const Point targetPos,
     const Point targetOri) {
@@ -667,6 +690,7 @@ vector<float> RunningZMP::legInvKin(const int foot, const Point targetPos,
 
   return jLegDeg;
 }
+
 //===========================================
 void RunningZMP::updatePose() {
 
@@ -738,7 +762,7 @@ void RunningZMP::updatePose() {
   CC->moveHingJoint(DOF_SHOULDER_LT, lElbowYaw);
 
   float lElbowPitch = predictEffector(DOF_ELBOW_L,
-      WM->getAHingeJoint(DOF_ELBOW_L).getAxis(), -90);
+      WM->getAHingeJoint(DOF_ELBOW_L).getAxis(), -30);
   CC->moveHingJoint(DOF_ELBOW_L, lElbowPitch);
 
   // Control angular Position of Right Arm
@@ -757,10 +781,11 @@ void RunningZMP::updatePose() {
   CC->moveHingJoint(DOF_SHOULDER_RT, rElbowYaw);
 
   float rElbowPitch = predictEffector(DOF_ELBOW_R,
-      WM->getAHingeJoint(DOF_ELBOW_R).getAxis(), 90);
+      WM->getAHingeJoint(DOF_ELBOW_R).getAxis(), 30);
   CC->moveHingJoint(DOF_ELBOW_R, rElbowPitch);
 
 }
+
 //===========================================
 double RunningZMP::predictEffector(int joint, double current, double setpoint) {
 
@@ -774,11 +799,11 @@ double RunningZMP::predictEffector(int joint, double current, double setpoint) {
   if (lastAngle[joint] == -1000)
     lastAngle[joint] = current;
 
-  // Pi Controller
+  // P Controller
   double pCoeficient = 0.25;
   double eff = err * pCoeficient;
 
-  // Simulator accepts the Effectors only in this range
+  // Simulator accepts the Effectors only in these range
   if (eff > 6.1395447)
     eff = 6.1395447;
 
@@ -789,7 +814,10 @@ double RunningZMP::predictEffector(int joint, double current, double setpoint) {
   lastAngle[joint] = current;
   return eff;
 }
+
 //===========================================
 RunningZMP::~RunningZMP() {
 
 }
+
+//===========================================
