@@ -19,7 +19,7 @@
 ///=====================================
 GameConf *GameConf::uniqueInstance = NULL;
 string GameConf::rsgPath =
-    "(scene /usr/local/share/rcssserver3d/rsg/agent/nao.rsg)";
+    "(scene rsg/agent/nao/nao.rsg)";
 
 ///=====================================
 GameConf::GameConf() {
