@@ -53,6 +53,7 @@ const int MAX = 12000;
 char *msg = new char[MAX];
 
 ///=====================================
+/// \define Reading the input arguments to the binary
 void readOptions(int argc, char* argv[]) {
   for (int i = 0; i < argc; i++) {
     if (strcmp(argv[i], "--teamname") == 0) {
@@ -65,74 +66,97 @@ void readOptions(int argc, char* argv[]) {
     }
   }
 }
+
 ///=====================================
+/// \define Read the message that is sent by the simulator to the agent's socket
 char* readMsg() {
   memset(msg, 0, MAX);
   strcpy(msg, SCM->readMsg());
   return msg;
 }
+
 ///=====================================
+/// \define getter of the message
 char* getMsg() {
   return msg;
 }
+
 ///=====================================
+/// \define Send the effector message of the agent to the simulator socket
 void sendMsg(string cmd) {
   SCM->sendMsg(cmd);
 }
+
 ///=====================================
+/// \define Initial the agent functionalities
 bool init() {
 
   logMsg.open("Msg.txt");
   logMsg.close();
 
+  // initial the agents connection
   cerr << teamName << ": connecting to " << hostName << ":" << port << "... ";
   SCM = ServerCommunicationManager::getUniqueInstance();
-  if (!SCM->connect2(port, hostName.c_str())) {
+
+  if (!SCM->connect(port, hostName.c_str())) {
     delete SCM;
     return false;
   }
+
   cout << "Done." << endl;
 
+  // Initial the commands creator
   CC = CommandCreator::getUniqueInstance();
+
+  // Initial the world model
   WM = WorldModel::getUniqueInstance();
   sendMsg(GameConf::getRSGPath());
-
-  //initialize worldModel
   WM->setMyNum(unum);
   WM->setTeamName(teamName);
+
+  // Receive the first messages from the simulator and extract the the primary information
+  // to update the world model
   char *strMessage = new char[4096];
   char *firstChar = strMessage;
   strcpy(strMessage, readMsg());
   MessageParser parser;
   parser.parseMessage(std::string(strMessage));
   GameConf::getUniqueInstance()->init();
+
+  // Send the first messages to the simulator to spawn the agent in simulator
   CC->init(unum, teamName);
   sendMsg(CC->getPreparedCommand());
-
   CC->reset();
   strMessage = firstChar;
   strcpy(strMessage, readMsg());
   parser.parseMessage(std::string(strMessage));
-
   CC->beam(-8, 0, 0);
   sendMsg(CC->getPreparedCommand());
 
   delete firstChar;
-
   return true;
 }
+
 ///=====================================
+/// \define An interface and to execute walking. This is rather slow walking how ever it can
+/// perform walking in both Gazebo and Simspark simulator.
+/// The parameters of the walk is set in this function. To understand the parameters for
+/// tuning them, check RunningZMP.h.
 void behaveWalking() {
 
+  // start the behavior only in play_on mode
   if (WM->getGSTime() == 0) {
     CC->stopAllJoints();
-  } else {
+  }
+  else {
     static bool initialized = false;
 
     if (!initialized) {
       initialized = true;
       runSkill = new RunningZMP;
       runSkill->init();
+
+      // The walk engine parameters
       runSkill->stepSizeX = 0.04;
       runSkill->stepTime = 0.4;
       runSkill->amplitude = 0;
@@ -146,6 +170,7 @@ void behaveWalking() {
 
     runSkill->offset = 0.23;
 
+    // Prepare to be in walking posture in the first 6 seconds
     double getReady = 5;
     if (WM->getGSTime() < getReady) {
       runSkill->offset = (((0.21 - 0.24) / getReady) * (WM->getGSTime()))
@@ -154,6 +179,8 @@ void behaveWalking() {
       runSkill->offset = 0.21;
     }
     if (WM->getGSTime() > 6) {
+
+      // start walking
       runSkill->stop = false;
     }
 
@@ -162,8 +189,15 @@ void behaveWalking() {
   }
 
 }
+
 ///=====================================
+/// \define The main loop of the agent, including sense, think, act.
+/// First, the agent receives the sense messages, and extracts the information from it.
+/// Second, the agent decides to execute the walking behavior.
+/// Finally, the agent sends to the simulator its effector messages, and wait to receive
+/// the next cycle of the sense messages.
 void run() {
+
   char *strMessage = new char[4000];
   char *firstChar = strMessage;
   string msg;
@@ -172,20 +206,30 @@ void run() {
   while (readMsg()) {
     CC->reset();
     strMessage = firstChar;
+
+    // Receive the sense message
     strcpy(strMessage, getMsg());
     logMsg.open("Msg.txt", ios::app);
     logMsg << strMessage << endl << endl;
     logMsg.close();
+
+    // Extract the information from the s-expression sense messages
     MessageParser parser;
     parser.parseMessage(std::string(strMessage));
+
+    // Execute the decision making system and walking behavior
     behaveWalking();
+
+    // send effector messages to the simulator
     sendMsg(CC->getPreparedCommand());
     WM->resetForUpdate();
   }
+
   delete firstChar;
 }
 
 ///=====================================
+/// \define The main of the test agent binary
 int main(int argc, char* argv[]) {
   cout << "\t\t* * * * < < < < <   TEST agent     > > > > > * * * *\n";
 
@@ -194,7 +238,9 @@ int main(int argc, char* argv[]) {
   if (!init()) {
     return 1;
   }
+
   run();
+
   cout << "\nTest Agent exited successfully!" << endl;
   return 0;
 }
