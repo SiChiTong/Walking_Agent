@@ -1,3 +1,17 @@
+/*
+*********************************************************************************
+*                            In the name of Almighty                            *
+*                                                                               *
+*           Connection.h : Robocup 3D Soccer Simulation Team Zigorat            *
+*                     (This team was previously named Gcyrus)                   *
+*                                                                               *
+*  Date: 03/20/2007                                                             *
+*  Author: Mahdi Hamdarsi                                                       *
+*  Comments: Class decleration for TDataPorter, TConnection, TRoboCupConnection *
+*            utilities for network manipulation                                 *
+*                                                                               *
+*********************************************************************************
+*/
 #include "Connection.h"
 #include <sys/wait.h>
 #include <unistd.h>
